@@ -80,7 +80,7 @@ $categories = $categories ?? [];
                             <h2><a href="<?= e(url('/products/' . $product->slug)) ?>"><?= e($product->name) ?></a></h2>
                             <span class="category-pill"><?= e($category) ?></span>
                         </div>
-                        <p class="shop-price">$<?= e(number_format((float) $product->price, 2)) ?></p>
+                        <p class="shop-price">$<?= e(money($product->price)) ?></p>
                         <p class="shop-stock <?= $inStock ? 'is-in' : 'is-out' ?>">
                             <?= $inStock ? 'In Stock (' . e((string) $product->quantityAvailable) . ')' : 'Out of Stock' ?>
                         </p>

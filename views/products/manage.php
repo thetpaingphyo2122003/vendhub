@@ -183,7 +183,7 @@ $categories = $categories ?? [];
                                     </div>
                                 </td>
                                 <td><span class="admin-cat-pill"><?= e($category) ?></span></td>
-                                <td class="admin-price">$<?= e(number_format((float) $product->price, 2)) ?></td>
+                                <td class="admin-price">$<?= e(money($product->price)) ?></td>
                                 <td><?= e((string) $qty) ?></td>
                                 <td><span class="admin-stock-pill is-<?= e($status) ?>"><?= e($statusLabel) ?></span></td>
                                 <td>

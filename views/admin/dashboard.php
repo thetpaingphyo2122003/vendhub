@@ -123,7 +123,7 @@ $topSalesSum = array_sum($topValues);
                                         </div>
                                     </td>
                                     <td><?= e((string) $tx->quantity) ?></td>
-                                    <td class="dash-total">$<?= e(number_format((float) $tx->total, 2)) ?></td>
+                                    <td class="dash-total">$<?= e(money($tx->total)) ?></td>
                                     <td><?= e((string) ($tx->createdAt ?? '—')) ?></td>
                                 </tr>
                             <?php endforeach; ?>

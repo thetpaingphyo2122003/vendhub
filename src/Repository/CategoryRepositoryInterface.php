@@ -26,8 +26,12 @@ interface CategoryRepositoryInterface
 
     public function countProductsUsing(string $name): int;
 
+    /** How many products in this category already appear in purchase history. */
+    public function countProductsWithPurchases(string $name): int;
+
     /**
-     * Deletes the category and all products (plus their transactions) in it.
+     * Deletes the category and its products that have no purchase history.
+     * Refuses when any product in the category has transactions (history preserved).
      *
      * @return list<string> Deleted product slugs (for image cleanup)
      */

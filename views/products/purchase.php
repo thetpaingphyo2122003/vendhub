@@ -15,7 +15,7 @@ $image = product_image($product->slug);
         <p class="eyebrow">Checkout</p>
         <h1>Buy <?= e($product->name) ?></h1>
         <dl class="details">
-            <div><dt>Price</dt><dd><?= e(number_format((float) $product->price, 3)) ?> USD</dd></div>
+            <div><dt>Price</dt><dd><?= e(money($product->price)) ?> USD</dd></div>
             <div><dt>Available</dt><dd><?= e((string) $product->quantityAvailable) ?></dd></div>
         </dl>
         <?php if ($product->quantityAvailable < 1): ?>

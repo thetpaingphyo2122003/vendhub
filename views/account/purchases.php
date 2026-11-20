@@ -45,14 +45,14 @@ $perPage = 5;
             <div class="purchase-stat-icon"><?= icon('coins', 18) ?></div>
             <div>
                 <p>Total Spent</p>
-                <strong data-stat-spent>$<?= e(number_format($totalSpent, 2)) ?></strong>
+                <strong data-stat-spent>$<?= e(money($totalSpent)) ?></strong>
             </div>
         </article>
         <article class="purchase-stat">
             <div class="purchase-stat-icon"><?= icon('calendar', 18) ?></div>
             <div>
                 <p>This Month</p>
-                <strong data-stat-month>$<?= e(number_format($monthSpent, 2)) ?></strong>
+                <strong data-stat-month>$<?= e(money($monthSpent)) ?></strong>
             </div>
         </article>
     </div>
@@ -127,7 +127,7 @@ $perPage = 5;
                             data-day="<?= e($dayKey) ?>"
                             data-week="<?= e($weekKey) ?>"
                             data-month="<?= e($monthStamp) ?>"
-                            data-total="<?= e(number_format((float) $transaction->total, 2, '.', '')) ?>"
+                            data-total="<?= e(number_format((float) $transaction->total, 3, '.', '')) ?>"
                             data-qty="<?= e((string) $transaction->quantity) ?>"
                             data-when="<?= e($created) ?>"
                         >
@@ -144,7 +144,7 @@ $perPage = 5;
                                 </div>
                             </td>
                             <td><?= e((string) $transaction->quantity) ?></td>
-                            <td class="tx-price">$<?= e(number_format((float) $transaction->total, 2)) ?></td>
+                            <td class="tx-price">$<?= e(money($transaction->total)) ?></td>
                             <td><?= e($created !== '' ? date('Y-m-d H:i', $stamp ?: time()) : '—') ?></td>
                             <td><span class="status-pill"><?= icon('check', 12) ?> Completed</span></td>
                             <td class="tx-actions">

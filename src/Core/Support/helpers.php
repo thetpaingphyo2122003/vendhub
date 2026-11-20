@@ -7,6 +7,12 @@ function e(null|string|int|float $value): string
     return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
+/** Format money with 3 decimal places to match DECIMAL(10,3) / PDF Pepsi $6.885. */
+function money(null|string|int|float $value): string
+{
+    return number_format((float) $value, 3, '.', ',');
+}
+
 function csp_nonce(): string
 {
     static $nonce = null;

@@ -92,26 +92,38 @@ final class PdoCategoryRepository implements CategoryRepositoryInterface
         return (int) ($row['total'] ?? 0);
     }
 
+    public function countProductsWithPurchases(string $name): int
+    {
+        $row = $this->connection->selectOne(
+            'SELECT COUNT(DISTINCT p.id) AS total
+             FROM products p
+             INNER JOIN transactions t ON t.product_id = p.id
+             WHERE p.category = ?',
+            [$name],
+        );
+
+        return (int) ($row['total'] ?? 0);
+    }
+
     public function deleteWithProducts(int $id, string $name): array
     {
         return $this->connection->transaction(function () use ($id, $name): array {
+            if ($this->countProductsWithPurchases($name) > 0) {
+                throw new \RuntimeException(
+                    'This category has products with purchase history. Move or keep those products; sales history is not deleted.',
+                );
+            }
+
             $rows = $this->connection->select(
                 'SELECT id, slug FROM products WHERE category = ?',
                 [$name],
             );
-            $ids = [];
             $slugs = [];
             foreach ($rows as $row) {
-                $ids[] = (int) $row['id'];
                 $slugs[] = (string) $row['slug'];
             }
 
-            if ($ids !== []) {
-                $placeholders = implode(',', array_fill(0, count($ids), '?'));
-                $this->connection->execute(
-                    "DELETE FROM transactions WHERE product_id IN ({$placeholders})",
-                    $ids,
-                );
+            if ($slugs !== []) {
                 $this->connection->execute(
                     'DELETE FROM products WHERE category = ?',
                     [$name],

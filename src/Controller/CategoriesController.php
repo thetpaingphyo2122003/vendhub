@@ -137,6 +137,8 @@ final class CategoriesController extends WebController
             } else {
                 $this->flash('Category deleted.');
             }
+        } catch (\RuntimeException $exception) {
+            $this->flash($exception->getMessage(), 'error');
         } catch (PDOException) {
             $this->flash('That category could not be deleted.', 'error');
         }

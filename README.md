@@ -129,7 +129,7 @@ The preview URL is the host you deploy to. This repository does not include a li
 
 ## Render deployment
 
-The repository includes `Dockerfile` and `render.yaml` for a Render free web service. Render does not provide a free MySQL database with this app configuration. TiDB Cloud Starter is a MySQL-compatible free option; it uses port `4000` and requires TLS.
+The repository includes `Dockerfile` and `render.yaml` for a Render free web service. **Primary database target is MySQL 8** (local XAMPP / MariaDB also work via PDO). Render does not provide a free MySQL database with this app configuration, so the live preview may use **TiDB Cloud Starter** (MySQL wire-protocol compatible: port `4000`, TLS required). Schema and queries stay standard MySQL SQL (`DECIMAL(10,3)`, `SELECT … FOR UPDATE`, InnoDB-style transactions).
 
 1. In Render, select **New > Blueprint** and connect this GitHub repository.
 2. Enter the prompted `APP_URL`, `DB_HOST`, `DB_NAME`, `DB_USER`, and `DB_PASS` values. For TiDB Cloud, use its generated host and prefixed username, set `DB_NAME` to `vending_machine`, and keep `DB_PORT=4000`, `DB_SSL=true`.

@@ -31,7 +31,7 @@ $successTotal = (float) ($success['total'] ?? 0);
             <header class="product-detail-head">
                 <span class="category-pill"><?= e($category) ?></span>
                 <h1><?= e($product->name) ?></h1>
-                <p class="product-detail-price">$<?= e(number_format((float) $product->price, 2)) ?></p>
+                <p class="product-detail-price">$<?= e(money($product->price)) ?></p>
             </header>
 
             <ul class="product-detail-meta">
@@ -47,7 +47,7 @@ $successTotal = (float) ($success['total'] ?? 0);
                 </li>
                 <li>
                     <span><?= icon('coins', 15) ?> Unit price</span>
-                    <strong>$<?= e(number_format((float) $product->price, 2)) ?></strong>
+                    <strong>$<?= e(money($product->price)) ?></strong>
                 </li>
             </ul>
 
@@ -113,14 +113,14 @@ $successTotal = (float) ($success['total'] ?? 0);
                         </div>
                         <div class="purchase-success__info">
                             <strong><?= e($successName) ?></strong>
-                            <span>$<?= e(number_format($unitPrice, 2)) ?> × <?= e((string) $successQty) ?></span>
+                            <span>$<?= e(money($unitPrice)) ?> × <?= e((string) $successQty) ?></span>
                         </div>
-                        <strong class="purchase-success__line">$<?= e(number_format($successTotal, 2)) ?></strong>
+                        <strong class="purchase-success__line">$<?= e(money($successTotal)) ?></strong>
                     </div>
 
                     <div class="purchase-success__paid">
                         <span>Total Paid</span>
-                        <strong>$<?= e(number_format($successTotal, 2)) ?></strong>
+                        <strong>$<?= e(money($successTotal)) ?></strong>
                     </div>
                 </div>
 

@@ -47,7 +47,7 @@ $sortIcon = static function (string $column) use ($query): string {
         <article class="dash-stat dash-stat--peach">
             <div>
                 <p>Revenue</p>
-                <strong>$<?= e(number_format((float) $revenueTotal, 2)) ?></strong>
+                <strong>$<?= e(money($revenueTotal)) ?></strong>
             </div>
             <span class="dash-stat-icon"><?= icon('coins', 18) ?></span>
         </article>
@@ -142,8 +142,8 @@ $sortIcon = static function (string $column) use ($query): string {
                                     </div>
                                 </td>
                                 <td class="is-num"><?= e((string) $transaction->quantity) ?></td>
-                                <td class="is-num">$<?= e(number_format((float) $transaction->unitPrice, 2)) ?></td>
-                                <td class="is-num admin-tx-total">$<?= e(number_format((float) $transaction->total, 2)) ?></td>
+                                <td class="is-num">$<?= e(money($transaction->unitPrice)) ?></td>
+                                <td class="is-num admin-tx-total">$<?= e(money($transaction->total)) ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
