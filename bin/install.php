@@ -88,11 +88,16 @@ function ensureUsernameColumn(PDO $pdo): void
         echo "Added username sign-in while preserving existing email data.\n";
     }
 
-    // Old installations retain email as historical data, but new username-only
-    // registrations must not be forced to supply it.
+    // Username has fully replaced email for authentication. Remove the legacy
+    // column only after every existing row has been assigned a username.
     $email = $pdo->query("SHOW COLUMNS FROM users LIKE 'email'")->fetch(PDO::FETCH_ASSOC);
-    if ($email !== false && strtoupper((string) ($email['Null'] ?? '')) !== 'YES') {
-        $pdo->exec('ALTER TABLE users MODIFY email VARCHAR(190) NULL');
+    if ($email !== false) {
+        $missingUsernames = (int) $pdo->query("SELECT COUNT(*) FROM users WHERE username IS NULL OR username = ''")->fetchColumn();
+        if ($missingUsernames > 0) {
+            throw new RuntimeException('Cannot remove the legacy email column before all users have usernames.');
+        }
+        $pdo->exec('ALTER TABLE users DROP COLUMN email');
+        echo "Removed legacy users.email column.\n";
     }
 
     $index = $pdo->query("SHOW INDEX FROM users WHERE Key_name = 'users_username_unique'")->fetch(PDO::FETCH_ASSOC);
