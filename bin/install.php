@@ -127,11 +127,24 @@ function resetAdminPassword(PDO $pdo, array $env): void
 {
     $username = strtolower(trim($env['ADMIN_USERNAME'] ?? 'admin'));
     $password = requireSecureAdminPassword($env);
-    $statement = $pdo->prepare('UPDATE users SET password_hash = ? WHERE username = ? AND role = ?');
-    $statement->execute([password_hash($password, PASSWORD_DEFAULT), $username, 'admin']);
-    if ($statement->rowCount() !== 1) {
-        throw new RuntimeException('Configured administrator account was not found.');
+    $existing = $pdo->prepare('SELECT id, role FROM users WHERE username = ?');
+    $existing->execute([$username]);
+    $account = $existing->fetch(PDO::FETCH_ASSOC);
+
+    if ($account === false) {
+        $create = $pdo->prepare('INSERT INTO users (name, username, password_hash, role) VALUES (?, ?, ?, ?)');
+        $create->execute(['Administrator', $username, password_hash($password, PASSWORD_DEFAULT), 'admin']);
+        echo "Administrator account created. Set RESET_ADMIN_PASSWORD=false now.\n";
+
+        return;
     }
+
+    if (($account['role'] ?? '') !== 'admin') {
+        throw new RuntimeException('The configured username belongs to a non-administrator account.');
+    }
+
+    $statement = $pdo->prepare('UPDATE users SET password_hash = ? WHERE id = ?');
+    $statement->execute([password_hash($password, PASSWORD_DEFAULT), (int) $account['id']]);
     echo "Administrator password reset completed. Set RESET_ADMIN_PASSWORD=false now.\n";
 }
 
