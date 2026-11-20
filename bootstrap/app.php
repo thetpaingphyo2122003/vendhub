@@ -39,7 +39,7 @@ loadEnv($root);
 
 $appEnv = strtolower((string) ($_ENV['APP_ENV'] ?? 'local'));
 $appDebug = ($_ENV['APP_DEBUG'] ?? 'false') === 'true';
-$forceHttps = ($_ENV['FORCE_HTTPS'] ?? '') === 'true' || $appEnv === 'production';
+$forceHttps = ($_ENV['FORCE_HTTPS'] ?? ($appEnv === 'production' ? 'true' : 'false')) === 'true';
 $jwtSecret = (string) ($_ENV['JWT_SECRET'] ?? '');
 $jwtTtl = max(300, (int) ($_ENV['JWT_TTL'] ?? 3600));
 
