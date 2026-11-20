@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?= e(url('/assets/app.css')) ?>">
+    <link rel="stylesheet" href="<?= e(asset_url('assets/app.css')) ?>">
 </head>
 <body class="auth-body">
     <div class="auth-wave auth-wave-top" aria-hidden="true"></div>
@@ -18,6 +18,6 @@
         <?php endif; ?>
         <?= $content ?>
     </main>
-    <script nonce="<?= e(csp_nonce()) ?>" src="<?= e(url('/assets/app.js')) ?>"></script>
+    <script nonce="<?= e(csp_nonce()) ?>" src="<?= e(asset_url('assets/app.js')) ?>"></script>
 </body>
 </html>

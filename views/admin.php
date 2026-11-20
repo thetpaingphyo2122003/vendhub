@@ -12,7 +12,7 @@ $adminInitial = mb_strtoupper(mb_substr($adminName !== '' ? $adminName : 'A', 0,
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?= e(url('/assets/app.css')) ?>">
+    <link rel="stylesheet" href="<?= e(asset_url('assets/app.css')) ?>">
 </head>
 <body class="admin admin-sidebar-open">
     <div class="admin-shell">
@@ -119,6 +119,6 @@ $adminInitial = mb_strtoupper(mb_substr($adminName !== '' ? $adminName : 'A', 0,
         </div>
     </div>
     <script nonce="<?= e(csp_nonce()) ?>" src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
-    <script nonce="<?= e(csp_nonce()) ?>" src="<?= e(url('/assets/app.js')) ?>"></script>
+    <script nonce="<?= e(csp_nonce()) ?>" src="<?= e(asset_url('assets/app.js')) ?>"></script>
 </body>
 </html>

@@ -10,7 +10,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates libfreetype6-dev libjpeg62-turbo-dev libpng-dev libwebp-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j"$(nproc)" pdo_mysql gd \
-    && a2enmod rewrite \
+    && a2enmod rewrite expires headers \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /var/www/html

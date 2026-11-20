@@ -42,6 +42,15 @@ function url(string $path = '/'): string
     return App\Core\Http\Url::to($path);
 }
 
+/** A versioned URL lets immutable browser caching remain safe after deploys. */
+function asset_url(string $path): string
+{
+    $absolute = dirname(__DIR__, 3) . '/public/' . ltrim($path, '/');
+    $version = is_file($absolute) ? (string) filemtime($absolute) : '1';
+
+    return url('/' . ltrim($path, '/')) . '?v=' . rawurlencode($version);
+}
+
 function product_image_directory(): string
 {
     return dirname(__DIR__, 3) . '/public/assets/products';
@@ -67,7 +76,7 @@ function product_image(string $slug): ?string
         return null;
     }
 
-    return url('/assets/products/' . rawurlencode(basename($path)));
+    return asset_url('assets/products/' . rawurlencode(basename($path)));
 }
 
 /** @param array<string, mixed>|null $file */
@@ -151,17 +160,17 @@ function delete_product_image(string $slug): void
 
 function machine_image(): string
 {
-    return url('/assets/vending_machine.png');
+    return asset_url('assets/vending_machine.png');
 }
 
 function brand_logo(): string
 {
-    return url('/assets/vendhub-brand.png');
+    return asset_url('assets/vendhub-brand.png');
 }
 
 function brand_mark(): string
 {
-    return url('/assets/vendhub-brand.png');
+    return asset_url('assets/vendhub-brand.png');
 }
 
 function product_category(\App\Model\Product|string $productOrSlug): string
