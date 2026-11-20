@@ -24,13 +24,13 @@
         <form method="post" action="<?= e(url('/admin/login')) ?>" class="auth-form" data-validate="login" novalidate>
             <input type="hidden" name="_csrf" value="<?= e($csrf) ?>">
 
-            <div class="field" data-field="email">
-                <label class="sr-only" for="admin-email">Email</label>
+            <div class="field" data-field="username">
+                <label class="sr-only" for="admin-username">Username</label>
                 <div class="input-shell">
                     <span class="input-icon" aria-hidden="true"><?= icon('mail', 16) ?></span>
-                    <input id="admin-email" name="email" type="email" value="<?= e($old['email'] ?? '') ?>" placeholder="Admin email" required autocomplete="username">
+                    <input id="admin-username" name="username" value="<?= e($old['username'] ?? '') ?>" placeholder="Admin username" required autocomplete="username">
                 </div>
-                <?php if (!empty($errors['email'])): ?><p class="field-error"><?= e($errors['email']) ?></p><?php endif; ?>
+                <?php if (!empty($errors['username'])): ?><p class="field-error"><?= e($errors['username']) ?></p><?php endif; ?>
             </div>
 
             <div class="field" data-field="password">

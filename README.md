@@ -26,10 +26,10 @@ XAMPP alternative: start Apache and MySQL, point a virtual host's document root 
 
 ## Demo accounts
 
-| Email | Password | Role |
+| Username | Password | Role |
 | --- | --- | --- |
-| admin@vending.test | Admin12345 | admin |
-| user@vending.test | User12345 | user |
+| admin | Admin12345 | admin |
+| user | User12345 | user |
 
 Seeded products include the brief set (Coke 3.990, Pepsi 6.885, Water 0.500) plus snack and drink extras that match the PNGs in `public/assets/products`. Product tiles load `/assets/products/{slug}.png` when that file exists. The shop hero uses `public/assets/vending_machine.png`.
 
@@ -37,7 +37,7 @@ Seeded products include the brief set (Coke 3.990, Pepsi 6.885, Water 0.500) plu
 
 Three tables, InnoDB, `utf8mb4`.
 
-`users` holds people who can sign in. `password_hash` is produced by `password_hash()`. `role` is `admin` or `user`. Email is unique.
+`users` holds people who can sign in. `password_hash` is produced by `password_hash()`. `role` is `admin` or `user`. Username is unique (3-32 letters, numbers, hyphens, or underscores).
 
 `products` is the machine inventory. `price` is `DECIMAL(10,3)` so a price such as 6.885 is stored exactly. `quantity_available` is the stock on hand. `slug` is the public URL key (`/products/pepsi`), and it stays the same after a rename.
 
@@ -74,7 +74,7 @@ curl -s http://localhost:8080/api/products
 
 curl -s -X POST http://localhost:8080/api/auth/token ^
   -H "Content-Type: application/json" ^
-  -d "{\"email\":\"user@vending.test\",\"password\":\"User12345\"}"
+  -d "{\"username\":\"user\",\"password\":\"User12345\"}"
 
 curl -s -X POST http://localhost:8080/api/products/coke/purchase ^
   -H "Authorization: Bearer TOKEN" ^

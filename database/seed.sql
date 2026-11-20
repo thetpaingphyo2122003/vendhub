@@ -1,6 +1,6 @@
-INSERT INTO users (name, email, password_hash, role) VALUES
-('Avery Admin', 'admin@vending.test', '$2y$10$lJZQw4cML8MeVlsUhsHFNu/wjMUSQmXdPc0ErdD9lof12zvkvh81m', 'admin'),
-('Riley Customer', 'user@vending.test', '$2y$10$pG7rJCpdTbpwkWDOGi3OJOkJWnt80LZrfJPkc7WcNwNyN9LgrVO0O', 'user');
+INSERT INTO users (name, username, password_hash, role) VALUES
+('Avery Admin', 'admin', '$2y$10$lJZQw4cML8MeVlsUhsHFNu/wjMUSQmXdPc0ErdD9lof12zvkvh81m', 'admin'),
+('Riley Customer', 'user', '$2y$10$pG7rJCpdTbpwkWDOGi3OJOkJWnt80LZrfJPkc7WcNwNyN9LgrVO0O', 'user');
 
 INSERT INTO categories (name, slug) VALUES
 ('Drink', 'drink'),

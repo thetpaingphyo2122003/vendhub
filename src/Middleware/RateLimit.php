@@ -31,11 +31,11 @@ final class RateLimit implements MiddlewareInterface
         $trusted = $this->config->get('security.trusted_proxies', []);
         $trusted = is_array($trusted) ? array_values(array_filter(array_map('strval', $trusted))) : [];
         $ip = ClientIp::resolve($request, $trusted);
-        $email = strtolower(trim((string) $request->input('email', '')));
+        $username = strtolower(trim((string) $request->input('username', '')));
 
         $keys = ['auth:ip:' . $ip . ':' . $request->method . ':' . $request->path];
-        if ($email !== '') {
-            $keys[] = 'auth:email:' . $email;
+        if ($username !== '') {
+            $keys[] = 'auth:username:' . $username;
         }
 
         foreach ($keys as $key) {

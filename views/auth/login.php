@@ -30,15 +30,15 @@
         <form method="post" action="<?= e(url('/login')) ?>" class="auth-form" data-validate="login" novalidate>
             <input type="hidden" name="_csrf" value="<?= e($csrf) ?>">
 
-            <div class="field" data-field="email">
-                <label class="sr-only" for="email">Email</label>
+            <div class="field" data-field="username">
+                <label class="sr-only" for="username">Username</label>
                 <div class="input-shell">
                     <span class="input-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
                     </span>
-                    <input id="email" name="email" type="email" value="<?= e($old['email'] ?? '') ?>" placeholder="Email" required autocomplete="username">
+                    <input id="username" name="username" value="<?= e($old['username'] ?? '') ?>" placeholder="Username" required autocomplete="username">
                 </div>
-                <?php if (!empty($errors['email'])): ?><p class="field-error"><?= e($errors['email']) ?></p><?php endif; ?>
+                <?php if (!empty($errors['username'])): ?><p class="field-error"><?= e($errors['username']) ?></p><?php endif; ?>
             </div>
 
             <div class="field" data-field="password">

@@ -36,7 +36,7 @@ final class RequireJwtTest extends TestCase
 
     public function testAValidTokenReachesTheNextAction(): void
     {
-        $user = new User(2, 'Riley', 'user@vending.test', 'hash', 'user');
+        $user = new User(2, 'Riley', 'riley', 'hash', 'user');
         $users = $this->createMock(UserRepositoryInterface::class);
         $users->method('findById')->with(2)->willReturn($user);
         $jwt = $this->jwt($users);
@@ -45,11 +45,11 @@ final class RequireJwtTest extends TestCase
 
         $response = (new RequireJwt($jwt))->handle(
             $request,
-            static fn (Request $request): Response => Response::html($request->user()?->email ?? ''),
+            static fn (Request $request): Response => Response::html($request->user()?->username ?? ''),
         );
 
         $this->assertSame(200, $response->status);
-        $this->assertSame('user@vending.test', $response->content);
+        $this->assertSame('riley', $response->content);
     }
 
     private function jwt(UserRepositoryInterface $users): JwtService

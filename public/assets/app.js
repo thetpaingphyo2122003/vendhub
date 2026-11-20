@@ -5,9 +5,9 @@ const eyeOff =
 
 const rules = {
     login: {
-        email(value) {
-            if (value === "") return "Email is required.";
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Enter a valid email address.";
+        username(value) {
+            if (value === "") return "Username is required.";
+            if (!/^[a-zA-Z0-9_-]{3,32}$/.test(value)) return "Username must be 3-32 letters, numbers, hyphens, or underscores.";
             return "";
         },
         password(value) {
@@ -21,9 +21,9 @@ const rules = {
             if (value.length > 100) return "Name must be 100 characters or fewer.";
             return "";
         },
-        email(value) {
-            if (value === "") return "Email is required.";
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Enter a valid email address.";
+        username(value) {
+            if (value === "") return "Username is required.";
+            if (!/^[a-zA-Z0-9_-]{3,32}$/.test(value)) return "Username must be 3-32 letters, numbers, hyphens, or underscores.";
             return "";
         },
         password(value) {
@@ -86,9 +86,9 @@ const rules = {
             if (value.length > 100) return "Name must be 100 characters or fewer.";
             return "";
         },
-        email(value) {
-            if (value === "") return "Email is required.";
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Enter a valid email address.";
+        username(value) {
+            if (value === "") return "Username is required.";
+            if (!/^[a-zA-Z0-9_-]{3,32}$/.test(value)) return "Username must be 3-32 letters, numbers, hyphens, or underscores.";
             return "";
         },
         current_password(value, form) {
@@ -1422,10 +1422,10 @@ function initProfilePage(root) {
     form.dataset.bound = "1";
 
     const nameInput = form.querySelector('input[name="name"]');
-    const emailInput = form.querySelector('input[name="email"]');
+    const usernameInput = form.querySelector('input[name="username"]');
     const avatar = root.querySelector("[data-profile-avatar]");
     const namePreview = root.querySelector("[data-profile-name]");
-    const emailPreview = root.querySelector("[data-profile-email]");
+    const usernamePreview = root.querySelector("[data-profile-username]");
 
     nameInput?.addEventListener("input", () => {
         const value = nameInput.value.trim();
@@ -1433,9 +1433,9 @@ function initProfilePage(root) {
         if (namePreview) namePreview.textContent = value || "Your name";
     });
 
-    emailInput?.addEventListener("input", () => {
-        if (!emailPreview) return;
-        emailPreview.textContent = emailInput.value.trim() || "your@email.com";
+    usernameInput?.addEventListener("input", () => {
+        if (!usernamePreview) return;
+        usernamePreview.textContent = usernameInput.value.trim() || "username";
     });
 
     const dialog = form.querySelector("[data-password-dialog]");

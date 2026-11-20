@@ -62,7 +62,7 @@ $total = count($users);
                                                 <?= e($user->name) ?>
                                                 <?php if ($isSelf): ?><em>You</em><?php endif; ?>
                                             </strong>
-                                            <span><?= e($user->email) ?></span>
+                                            <span><?= e($user->username) ?></span>
                                         </div>
                                     </div>
                                 </td>

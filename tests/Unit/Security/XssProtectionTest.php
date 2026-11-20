@@ -36,7 +36,7 @@ final class XssProtectionTest extends TestCase
 
         $register = (new RegisterValidator())->validate([
             'name' => '<b>Admin</b>',
-            'email' => 'a@b.com',
+            'username' => 'admin',
             'password' => 'Password1!',
             'password_confirmation' => 'Password1!',
         ]);

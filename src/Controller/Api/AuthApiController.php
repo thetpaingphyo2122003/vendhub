@@ -26,16 +26,16 @@ final class AuthApiController
     #[Route('/api/auth/token', methods: 'POST', middleware: [RateLimit::class])]
     public function token(Request $request): Response
     {
-        $email = trim((string) $request->input('email', ''));
+        $username = trim((string) $request->input('username', ''));
         $password = (string) $request->input('password', '');
-        $user = $this->auth->verify($email, $password);
+        $user = $this->auth->verify($username, $password);
         if ($user === null) {
-            return Response::json(['message' => 'The email or password is incorrect.'], 401);
+            return Response::json(['message' => 'The username or password is incorrect.'], 401);
         }
 
-        $normalized = strtolower($email);
+        $normalized = strtolower($username);
         if ($normalized !== '') {
-            $this->rateLimiter->clear('auth:email:' . $normalized);
+            $this->rateLimiter->clear('auth:username:' . $normalized);
         }
 
         return Response::json([
@@ -44,7 +44,7 @@ final class AuthApiController
             'expires_in' => max(300, (int) $this->config->get('jwt.ttl', 3600)),
             'user' => [
                 'name' => $user->name,
-                'email' => $user->email,
+                'username' => $user->username,
                 'role' => $user->role,
             ],
         ]);

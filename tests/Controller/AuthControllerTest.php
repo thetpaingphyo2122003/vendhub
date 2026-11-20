@@ -47,13 +47,13 @@ final class AuthControllerTest extends TestCase
             'POST',
             '/login',
             [],
-            ['email' => '', 'password' => ''],
+            ['username' => '', 'password' => ''],
             [],
             [],
         ));
 
         $this->assertSame(422, $response->status);
-        $this->assertStringContainsString('Email and password are required.', $response->content);
+        $this->assertStringContainsString('Username and password are required.', $response->content);
     }
 
     public function testLoginRejectsBadCredentials(): void
@@ -65,7 +65,7 @@ final class AuthControllerTest extends TestCase
             'POST',
             '/login',
             [],
-            ['email' => 'user@vending.test', 'password' => 'nope'],
+            ['username' => 'user', 'password' => 'nope'],
             [],
             [],
         ));
@@ -76,7 +76,7 @@ final class AuthControllerTest extends TestCase
 
     public function testUserLoginBlocksAdminAccounts(): void
     {
-        $admin = new User(1, 'Avery', 'admin@vending.test', 'hash', 'admin');
+        $admin = new User(1, 'Avery', 'admin', 'hash', 'admin');
         $auth = $this->createMock(AuthServiceInterface::class);
         $auth->method('attempt')->willReturn(true);
         $auth->method('user')->willReturn($admin);
@@ -86,7 +86,7 @@ final class AuthControllerTest extends TestCase
             'POST',
             '/login',
             [],
-            ['email' => 'admin@vending.test', 'password' => 'Admin12345!'],
+            ['username' => 'admin', 'password' => 'Admin12345!'],
             [],
             [],
         ));
@@ -97,7 +97,7 @@ final class AuthControllerTest extends TestCase
 
     public function testAdminLoginRejectsNonAdmin(): void
     {
-        $user = new User(2, 'Riley', 'user@vending.test', 'hash', 'user');
+        $user = new User(2, 'Riley', 'user', 'hash', 'user');
         $auth = $this->createMock(AuthServiceInterface::class);
         $auth->method('attempt')->willReturn(true);
         $auth->method('user')->willReturn($user);
@@ -107,7 +107,7 @@ final class AuthControllerTest extends TestCase
             'POST',
             '/admin/login',
             [],
-            ['email' => 'user@vending.test', 'password' => 'User12345!'],
+            ['username' => 'user', 'password' => 'User12345!'],
             [],
             [],
         ));
@@ -118,7 +118,7 @@ final class AuthControllerTest extends TestCase
 
     public function testSuccessfulUserLoginRedirectsToProducts(): void
     {
-        $user = new User(2, 'Riley', 'user@vending.test', 'hash', 'user');
+        $user = new User(2, 'Riley', 'user', 'hash', 'user');
         $auth = $this->createMock(AuthServiceInterface::class);
         $auth->method('attempt')->willReturn(true);
         $auth->method('user')->willReturn($user);
@@ -127,7 +127,7 @@ final class AuthControllerTest extends TestCase
             'POST',
             '/login',
             [],
-            ['email' => 'user@vending.test', 'password' => 'User12345!'],
+            ['username' => 'user', 'password' => 'User12345!'],
             [],
             [],
         ));

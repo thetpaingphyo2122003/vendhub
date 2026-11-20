@@ -41,15 +41,15 @@
                 <?php if (!empty($errors['name'])): ?><p class="field-error"><?= e($errors['name']) ?></p><?php endif; ?>
             </div>
 
-            <div class="field" data-field="email">
-                <label class="sr-only" for="email">Email</label>
+            <div class="field" data-field="username">
+                <label class="sr-only" for="username">Username</label>
                 <div class="input-shell">
                     <span class="input-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
                     </span>
-                    <input id="email" name="email" type="email" value="<?= e($old['email'] ?? '') ?>" placeholder="Email" required autocomplete="email">
+                    <input id="username" name="username" value="<?= e($old['username'] ?? '') ?>" placeholder="Username" required minlength="3" maxlength="32" autocomplete="username">
                 </div>
-                <?php if (!empty($errors['email'])): ?><p class="field-error"><?= e($errors['email']) ?></p><?php endif; ?>
+                <?php if (!empty($errors['username'])): ?><p class="field-error"><?= e($errors['username']) ?></p><?php endif; ?>
             </div>
 
             <div class="field" data-field="password">

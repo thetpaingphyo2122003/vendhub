@@ -25,23 +25,23 @@ final class AuthRegisterFlowIntegrationTest extends TestCase
     {
         $input = [
             'name' => 'Riley',
-            'email' => 'new@vending.test',
+            'username' => 'newuser',
             'password' => 'User12345!',
             'password_confirmation' => 'User12345!',
         ];
         $this->assertSame([], (new RegisterValidator())->validate($input));
 
         $users = $this->createMock(UserRepositoryInterface::class);
-        $users->method('findByEmail')->willReturn(null);
+        $users->method('findByUsername')->willReturn(null);
         $users->expects($this->once())->method('create')->willReturn(
-            new User(9, 'Riley', 'new@vending.test', 'hash', 'user'),
+            new User(9, 'Riley', 'newuser', 'hash', 'user'),
         );
         $users->method('findById')->with(9)->willReturn(
-            new User(9, 'Riley', 'new@vending.test', 'hash', 'user'),
+            new User(9, 'Riley', 'newuser', 'hash', 'user'),
         );
 
         $auth = new AuthService($users);
-        $user = $auth->register($input['name'], $input['email'], $input['password']);
+        $user = $auth->register($input['name'], $input['username'], $input['password']);
 
         $this->assertSame(9, $user->id);
         $this->assertSame(9, $_SESSION['user_id']);
@@ -52,7 +52,7 @@ final class AuthRegisterFlowIntegrationTest extends TestCase
     {
         $errors = (new RegisterValidator())->validate([
             'name' => '',
-            'email' => 'bad',
+            'username' => 'bad space',
             'password' => 'weak',
             'password_confirmation' => 'nope',
         ]);
@@ -63,21 +63,21 @@ final class AuthRegisterFlowIntegrationTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testDuplicateEmailIsRejectedByServiceLayer(): void
+    public function testDuplicateUsernameIsRejectedByServiceLayer(): void
     {
         $input = [
             'name' => 'Riley',
-            'email' => 'taken@vending.test',
+            'username' => 'taken',
             'password' => 'User12345!',
             'password_confirmation' => 'User12345!',
         ];
         $this->assertSame([], (new RegisterValidator())->validate($input));
 
         $users = $this->createMock(UserRepositoryInterface::class);
-        $users->method('findByEmail')->willReturn(new User(3, 'Taken', 'taken@vending.test', 'hash', 'user'));
+        $users->method('findByUsername')->willReturn(new User(3, 'Taken', 'taken', 'hash', 'user'));
         $users->expects($this->never())->method('create');
 
         $this->expectException(ValidationException::class);
-        (new AuthService($users))->register($input['name'], $input['email'], $input['password']);
+        (new AuthService($users))->register($input['name'], $input['username'], $input['password']);
     }
 }

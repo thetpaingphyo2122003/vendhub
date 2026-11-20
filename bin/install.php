@@ -63,6 +63,7 @@ try {
 }
 
 runSql($server, (string) file_get_contents($root . '/database/schema.sql'));
+ensureUsernameColumn($server);
 ensureProductCategoryColumn($server);
 ensureProductReorderPointColumn($server);
 ensureCategoriesTable($server);
@@ -70,10 +71,23 @@ ensureCategoriesTable($server);
 $users = (int) $server->query('SELECT COUNT(*) FROM users')->fetchColumn();
 if ($users === 0) {
     runSql($server, (string) file_get_contents($root . '/database/seed.sql'));
-    echo "Seeded admin@vending.test / Admin12345 and user@vending.test / User12345\n";
+    echo "Seeded admin / Admin12345 and user / User12345\n";
 } else {
     echo "Users already exist, seed skipped.\n";
     seedMissingCategories($server);
+}
+
+function ensureUsernameColumn(PDO $pdo): void
+{
+    $username = $pdo->query("SHOW COLUMNS FROM users LIKE 'username'")->fetch(PDO::FETCH_ASSOC);
+    if ($username !== false) {
+        return;
+    }
+
+    $pdo->exec('ALTER TABLE users ADD COLUMN username VARCHAR(32) NULL AFTER name');
+    $pdo->exec("UPDATE users SET username = CASE email WHEN 'admin@vending.test' THEN 'admin' WHEN 'user@vending.test' THEN 'user' ELSE CONCAT('user_', id) END");
+    $pdo->exec('ALTER TABLE users MODIFY username VARCHAR(32) NOT NULL, ADD UNIQUE KEY users_username_unique (username)');
+    echo "Added username sign-in while preserving existing email data.\n";
 }
 
 echo "Database `{$name}` is ready.\n";

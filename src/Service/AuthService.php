@@ -26,9 +26,9 @@ final class AuthService implements AuthServiceInterface
         return $this->users->findById((int) $id);
     }
 
-    public function attempt(string $email, string $password): bool
+    public function attempt(string $username, string $password): bool
     {
-        $user = $this->verify($email, $password);
+        $user = $this->verify($username, $password);
         if ($user === null || $user->id === null) {
             return false;
         }
@@ -38,9 +38,9 @@ final class AuthService implements AuthServiceInterface
         return true;
     }
 
-    public function verify(string $email, string $password): ?User
+    public function verify(string $username, string $password): ?User
     {
-        $user = $this->users->findByEmail($this->normalizeEmail($email));
+        $user = $this->users->findByUsername($this->normalizeUsername($username));
         $hash = $user->passwordHash ?? self::DUMMY_HASH;
         $valid = password_verify($password, $hash);
 
@@ -58,28 +58,28 @@ final class AuthService implements AuthServiceInterface
         $this->rotateCsrf();
     }
 
-    public function register(string $name, string $email, string $password): User
+    public function register(string $name, string $username, string $password): User
     {
-        $email = $this->normalizeEmail($email);
-        if ($this->users->findByEmail($email) !== null) {
-            throw new ValidationException(['email' => 'An account with this email already exists.']);
+        $username = $this->normalizeUsername($username);
+        if ($this->users->findByUsername($username) !== null) {
+            throw new ValidationException(['username' => 'This username is already taken.']);
         }
 
-        $user = $this->users->create($name, $email, password_hash($password, PASSWORD_DEFAULT), 'user');
+        $user = $this->users->create($name, $username, password_hash($password, PASSWORD_DEFAULT), 'user');
         $this->login($user);
 
         return $user;
     }
 
-    public function updateProfile(User $user, string $name, string $email): User
+    public function updateProfile(User $user, string $name, string $username): User
     {
-        $email = $this->normalizeEmail($email);
-        $existing = $this->users->findByEmail($email);
+        $username = $this->normalizeUsername($username);
+        $existing = $this->users->findByUsername($username);
         if ($existing !== null && (int) $existing->id !== (int) $user->id) {
-            throw new ValidationException(['email' => 'An account with this email already exists.']);
+            throw new ValidationException(['username' => 'This username is already taken.']);
         }
 
-        $updated = new User((int) $user->id, trim($name), $email, $user->passwordHash, $user->role);
+        $updated = new User((int) $user->id, trim($name), $username, $user->passwordHash, $user->role);
         $this->users->update($updated);
 
         return $updated;
@@ -106,8 +106,8 @@ final class AuthService implements AuthServiceInterface
         $_SESSION['csrf'] = bin2hex(random_bytes(32));
     }
 
-    private function normalizeEmail(string $email): string
+    private function normalizeUsername(string $username): string
     {
-        return strtolower(trim($email));
+        return strtolower(trim($username));
     }
 }

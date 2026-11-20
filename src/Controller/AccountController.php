@@ -68,7 +68,7 @@ final class AccountController extends WebController
         $user = $this->auth->user();
         $input = [
             'name' => (string) $request->input('name', ''),
-            'email' => (string) $request->input('email', ''),
+            'username' => (string) $request->input('username', ''),
             'current_password' => (string) $request->input('current_password', ''),
             'password' => (string) $request->input('password', ''),
             'password_confirmation' => (string) $request->input('password_confirmation', ''),
@@ -86,7 +86,7 @@ final class AccountController extends WebController
         }
 
         try {
-            $updated = $this->auth->updateProfile($user, $input['name'], $input['email']);
+            $updated = $this->auth->updateProfile($user, $input['name'], $input['username']);
             $changingPassword = $input['current_password'] !== '' || $input['password'] !== '';
             if ($changingPassword) {
                 $this->auth->changePassword($updated, $input['current_password'], $input['password']);

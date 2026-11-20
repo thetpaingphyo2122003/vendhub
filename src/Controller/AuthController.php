@@ -49,22 +49,22 @@ final class AuthController extends WebController
     #[Route('/login', methods: 'POST', middleware: [RateLimit::class, VerifyCsrf::class])]
     public function login(Request $request): Response
     {
-        $email = trim((string) $request->input('email', ''));
+        $username = trim((string) $request->input('username', ''));
         $password = (string) $request->input('password', '');
 
-        if ($email === '' || $password === '') {
+        if ($username === '' || $password === '') {
             return $this->renderAuth('auth/login', [
                 'title' => 'Sign In',
-                'errors' => ['email' => 'Email and password are required.'],
-                'old' => ['email' => $email],
+                'errors' => ['username' => 'Username and password are required.'],
+                'old' => ['username' => $username],
             ], 422);
         }
 
-        if (!$this->auth->attempt($email, $password)) {
+        if (!$this->auth->attempt($username, $password)) {
             return $this->renderAuth('auth/login', [
                 'title' => 'Sign In',
-                'errors' => ['email' => 'The email or password is incorrect.'],
-                'old' => ['email' => $email],
+                'errors' => ['username' => 'The username or password is incorrect.'],
+                'old' => ['username' => $username],
             ], 422);
         }
 
@@ -74,12 +74,12 @@ final class AuthController extends WebController
 
             return $this->renderAuth('auth/login', [
                 'title' => 'Sign In',
-                'errors' => ['email' => 'Admin accounts must sign in at Admin Login.'],
-                'old' => ['email' => $email],
+                'errors' => ['username' => 'Admin accounts must sign in at Admin Login.'],
+                'old' => ['username' => $username],
             ], 422);
         }
 
-        $this->clearAuthRateLimit($email);
+        $this->clearAuthRateLimit($username);
 
         return $this->redirect('/products');
     }
@@ -98,22 +98,22 @@ final class AuthController extends WebController
     #[Route('/admin/login', methods: 'POST', middleware: [RateLimit::class, VerifyCsrf::class])]
     public function adminLogin(Request $request): Response
     {
-        $email = trim((string) $request->input('email', ''));
+        $username = trim((string) $request->input('username', ''));
         $password = (string) $request->input('password', '');
 
-        if ($email === '' || $password === '') {
+        if ($username === '' || $password === '') {
             return $this->renderAuth('auth/admin_login', [
                 'title' => 'Admin Sign In',
-                'errors' => ['email' => 'Email and password are required.'],
-                'old' => ['email' => $email],
+                'errors' => ['username' => 'Username and password are required.'],
+                'old' => ['username' => $username],
             ], 422);
         }
 
-        if (!$this->auth->attempt($email, $password)) {
+        if (!$this->auth->attempt($username, $password)) {
             return $this->renderAuth('auth/admin_login', [
                 'title' => 'Admin Sign In',
-                'errors' => ['email' => 'The email or password is incorrect.'],
-                'old' => ['email' => $email],
+                'errors' => ['username' => 'The username or password is incorrect.'],
+                'old' => ['username' => $username],
             ], 422);
         }
 
@@ -123,12 +123,12 @@ final class AuthController extends WebController
 
             return $this->renderAuth('auth/admin_login', [
                 'title' => 'Admin Sign In',
-                'errors' => ['email' => 'This account does not have admin access.'],
-                'old' => ['email' => $email],
+                'errors' => ['username' => 'This account does not have admin access.'],
+                'old' => ['username' => $username],
             ], 422);
         }
 
-        $this->clearAuthRateLimit($email);
+        $this->clearAuthRateLimit($username);
 
         return $this->redirect('/admin');
     }
@@ -162,7 +162,7 @@ final class AuthController extends WebController
     {
         $input = [
             'name' => trim((string) $request->input('name', '')),
-            'email' => trim((string) $request->input('email', '')),
+            'username' => trim((string) $request->input('username', '')),
             'password' => (string) $request->input('password', ''),
             'password_confirmation' => (string) $request->input('password_confirmation', ''),
         ];
@@ -176,7 +176,7 @@ final class AuthController extends WebController
         }
 
         try {
-            $this->auth->register($input['name'], $input['email'], $input['password']);
+            $this->auth->register($input['name'], $input['username'], $input['password']);
         } catch (ValidationException $exception) {
             return $this->renderAuth('auth/register', [
                 'title' => 'Register',
@@ -185,17 +185,17 @@ final class AuthController extends WebController
             ], 422);
         }
 
-        $this->clearAuthRateLimit($input['email']);
+        $this->clearAuthRateLimit($input['username']);
         $this->flash('Account created.');
 
         return $this->redirect('/products');
     }
 
-    private function clearAuthRateLimit(string $email): void
+    private function clearAuthRateLimit(string $username): void
     {
-        $normalized = strtolower(trim($email));
+        $normalized = strtolower(trim($username));
         if ($normalized !== '') {
-            $this->rateLimiter->clear('auth:email:' . $normalized);
+            $this->rateLimiter->clear('auth:username:' . $normalized);
         }
     }
 }

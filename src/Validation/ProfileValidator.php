@@ -13,7 +13,7 @@ final class ProfileValidator
     {
         $errors = [];
         $name = trim((string) ($input['name'] ?? ''));
-        $email = trim((string) ($input['email'] ?? ''));
+        $username = trim((string) ($input['username'] ?? ''));
         $current = (string) ($input['current_password'] ?? '');
         $password = (string) ($input['password'] ?? '');
         $confirmation = (string) ($input['password_confirmation'] ?? '');
@@ -27,10 +27,10 @@ final class ProfileValidator
             $errors['name'] = 'Name must be 100 characters or fewer.';
         }
 
-        if ($email === '') {
-            $errors['email'] = 'Email is required.';
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors['email'] = 'Enter a valid email address.';
+        if ($username === '') {
+            $errors['username'] = 'Username is required.';
+        } elseif (preg_match('/^[a-zA-Z0-9_-]{3,32}$/', $username) !== 1) {
+            $errors['username'] = 'Username must be 3-32 letters, numbers, hyphens, or underscores.';
         }
 
         if ($changingPassword) {

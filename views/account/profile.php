@@ -4,7 +4,7 @@
 /** @var array<string, mixed> $old */
 
 $name = (string) ($old['name'] ?? $profileUser->name);
-$email = (string) ($old['email'] ?? $profileUser->email);
+$username = (string) ($old['username'] ?? $profileUser->username);
 $initial = mb_strtoupper(mb_substr($name !== '' ? $name : $profileUser->name, 0, 1));
 $passwordErrors = array_intersect_key($errors ?? [], array_flip(['current_password', 'password', 'password_confirmation']));
 $openPasswordDialog = $passwordErrors !== [];
@@ -25,7 +25,7 @@ $openPasswordDialog = $passwordErrors !== [];
             <div class="avatar large profile-avatar" data-profile-avatar><?= e($initial) ?></div>
             <div class="profile-identity-copy">
                 <strong data-profile-name><?= e($name) ?></strong>
-                <span data-profile-email><?= e($email) ?></span>
+                <span data-profile-username><?= e($username) ?></span>
             </div>
             <button type="button" class="button button-ghost button-small profile-security-btn" data-open-password-dialog>
                 <?= icon('lock', 15) ?> Change Password
@@ -47,12 +47,12 @@ $openPasswordDialog = $passwordErrors !== [];
                     <?php if (!empty($errors['name'])): ?><p class="field-error"><?= e($errors['name']) ?></p><?php endif; ?>
                 </div>
 
-                <div class="field" data-field="email">
-                    <label for="email"><?= icon('mail', 14) ?> Email</label>
+                <div class="field" data-field="username">
+                    <label for="username"><?= icon('user', 14) ?> Username</label>
                     <div class="input-shell">
-                        <input id="email" name="email" type="email" value="<?= e($email) ?>" required autocomplete="email">
+                        <input id="username" name="username" value="<?= e($username) ?>" required minlength="3" maxlength="32" autocomplete="username">
                     </div>
-                    <?php if (!empty($errors['email'])): ?><p class="field-error"><?= e($errors['email']) ?></p><?php endif; ?>
+                    <?php if (!empty($errors['username'])): ?><p class="field-error"><?= e($errors['username']) ?></p><?php endif; ?>
                 </div>
             </div>
 

@@ -9,11 +9,11 @@ use PHPUnit\Framework\TestCase;
 
 final class RegisterValidatorTest extends TestCase
 {
-    public function testStrongPasswordAndValidEmailPass(): void
+    public function testStrongPasswordAndValidUsernamePass(): void
     {
         $errors = (new RegisterValidator())->validate([
             'name' => 'Riley',
-            'email' => 'user@vending.test',
+            'username' => 'riley',
             'password' => 'User12345!',
             'password_confirmation' => 'User12345!',
         ]);
@@ -25,12 +25,12 @@ final class RegisterValidatorTest extends TestCase
     {
         $errors = (new RegisterValidator())->validate([
             'name' => 'Riley',
-            'email' => 'not-an-email',
+            'username' => 'bad space',
             'password' => 'weak',
             'password_confirmation' => 'other',
         ]);
 
-        $this->assertArrayHasKey('email', $errors);
+        $this->assertArrayHasKey('username', $errors);
         $this->assertArrayHasKey('password', $errors);
         $this->assertArrayHasKey('password_confirmation', $errors);
     }
@@ -39,7 +39,7 @@ final class RegisterValidatorTest extends TestCase
     {
         $errors = (new RegisterValidator())->validate([
             'name' => '<script>x</script>',
-            'email' => 'ok@test.com',
+            'username' => 'riley',
             'password' => 'User12345!',
             'password_confirmation' => 'User12345!',
         ]);

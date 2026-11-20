@@ -8,11 +8,11 @@ use App\Model\User;
 
 interface UserRepositoryInterface
 {
-    public function create(string $name, string $email, string $passwordHash, string $role): User;
+    public function create(string $name, string $username, string $passwordHash, string $role): User;
 
     public function findById(int $id): ?User;
 
-    public function findByEmail(string $email): ?User;
+    public function findByUsername(string $username): ?User;
 
     /** @return list<User> */
     public function all(): array;
