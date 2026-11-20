@@ -559,6 +559,11 @@ function wireDelegatedEvents() {
             const form = event.target;
             if (!(form instanceof HTMLFormElement)) return;
 
+            if (form.dataset.submitting === "1") {
+                event.preventDefault();
+                return;
+            }
+
             const schemaKey = form.getAttribute("data-validate");
             if (schemaKey && rules[schemaKey]) {
                 const schema = rules[schemaKey];
@@ -576,6 +581,9 @@ function wireDelegatedEvents() {
             const confirmMessage = form.getAttribute("data-confirm");
             if (!confirmMessage || form.dataset.confirmed === "1") {
                 delete form.dataset.confirmed;
+                if ((form.getAttribute("method") || "get").toLowerCase() !== "get") {
+                    setFormLoading(form);
+                }
                 return;
             }
 
@@ -602,6 +610,22 @@ function wireDelegatedEvents() {
         },
         true,
     );
+}
+
+function setFormLoading(form) {
+    form.dataset.submitting = "1";
+    form.classList.add("is-submitting");
+    document.body.classList.add("is-submitting");
+
+    form.querySelectorAll('button[type="submit"], input[type="submit"]').forEach((button) => {
+        button.disabled = true;
+        button.setAttribute("aria-busy", "true");
+        button.classList.add("is-loading");
+        if (button instanceof HTMLInputElement) {
+            button.dataset.loadingValue = button.value;
+            button.value = "Processing…";
+        }
+    });
 }
 
 function enableSoftNavigation() {

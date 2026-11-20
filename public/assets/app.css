@@ -98,6 +98,35 @@ body.store {
 
 a { color: var(--accent-deep); }
 
+/* Form actions: show progress and prevent duplicate submissions. */
+body.is-submitting,
+body.is-submitting * {
+    cursor: progress;
+}
+
+form.is-submitting button[type="submit"],
+form.is-submitting input[type="submit"] {
+    pointer-events: none;
+    opacity: 0.78;
+}
+
+button.is-loading::after {
+    content: "";
+    display: inline-block;
+    width: 0.85em;
+    height: 0.85em;
+    margin-left: 0.55em;
+    vertical-align: -0.1em;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: form-button-spin 0.7s linear infinite;
+}
+
+@keyframes form-button-spin {
+    to { transform: rotate(360deg); }
+}
+
 .topbar {
     position: sticky;
     top: 0;
