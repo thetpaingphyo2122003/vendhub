@@ -24,12 +24,11 @@ XAMPP alternative: start Apache and MySQL, point a virtual host's document root 
 
 `.env` matches a default XAMPP MySQL install: host `127.0.0.1`, user `root`, empty password, database `vending_machine`.
 
-## Demo accounts
+## Administrator setup
 
-| Username | Password | Role |
-| --- | --- | --- |
-| admin | Admin12345 | admin |
-| user | User12345 | user |
+Set `ADMIN_USERNAME` and a unique `ADMIN_PASSWORD` in `.env` before running `php bin/install.php` on a fresh database. The password must be at least 16 characters and contain uppercase, lowercase, number, and symbol characters. It is hashed with `password_hash()` and never committed to the repository.
+
+To rotate an existing administrator password, set `RESET_ADMIN_PASSWORD=true` for one deployment, then return it to `false` after the reset completes.
 
 Seeded products include the brief set (Coke 3.990, Pepsi 6.885, Water 0.500) plus snack and drink extras that match the PNGs in `public/assets/products`. Product tiles load `/assets/products/{slug}.png` when that file exists. The shop hero uses `public/assets/vending_machine.png`.
 

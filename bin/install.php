@@ -16,7 +16,7 @@ foreach (is_file($envFile) ? (file($envFile, FILE_IGNORE_NEW_LINES) ?: []) : [] 
     $env[trim($key)] = trim($value, " \t\"'");
 }
 
-foreach (['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASS', 'DB_SSL', 'DB_SSL_CA'] as $key) {
+foreach (['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASS', 'DB_SSL', 'DB_SSL_CA', 'ADMIN_USERNAME', 'ADMIN_PASSWORD', 'RESET_ADMIN_PASSWORD'] as $key) {
     $value = getenv($key);
     if ($value !== false) {
         $env[$key] = $value;
@@ -72,10 +72,15 @@ ensureCategoriesTable($server);
 $users = (int) $server->query('SELECT COUNT(*) FROM users')->fetchColumn();
 if ($users === 0) {
     runSql($server, (string) file_get_contents($root . '/database/seed.sql'));
-    echo "Seeded admin / Admin12345 and user / User12345\n";
+    seedAdmin($server, $env);
+    echo "Seeded products, categories, and the configured administrator account.\n";
 } else {
     echo "Users already exist, seed skipped.\n";
     seedMissingCategories($server);
+}
+
+if (($env['RESET_ADMIN_PASSWORD'] ?? 'false') === 'true') {
+    resetAdminPassword($server, $env);
 }
 
 function ensureUsernameColumn(PDO $pdo): void
@@ -107,6 +112,45 @@ function ensureUsernameColumn(PDO $pdo): void
 }
 
 echo "Database `{$name}` is ready.\n";
+
+/** @param array<string, string> $env */
+function seedAdmin(PDO $pdo, array $env): void
+{
+    $username = strtolower(trim($env['ADMIN_USERNAME'] ?? 'admin'));
+    $password = requireSecureAdminPassword($env);
+    $statement = $pdo->prepare('INSERT INTO users (name, username, password_hash, role) VALUES (?, ?, ?, ?)');
+    $statement->execute(['Administrator', $username, password_hash($password, PASSWORD_DEFAULT), 'admin']);
+}
+
+/** @param array<string, string> $env */
+function resetAdminPassword(PDO $pdo, array $env): void
+{
+    $username = strtolower(trim($env['ADMIN_USERNAME'] ?? 'admin'));
+    $password = requireSecureAdminPassword($env);
+    $statement = $pdo->prepare('UPDATE users SET password_hash = ? WHERE username = ? AND role = ?');
+    $statement->execute([password_hash($password, PASSWORD_DEFAULT), $username, 'admin']);
+    if ($statement->rowCount() !== 1) {
+        throw new RuntimeException('Configured administrator account was not found.');
+    }
+    echo "Administrator password reset completed. Set RESET_ADMIN_PASSWORD=false now.\n";
+}
+
+/** @param array<string, string> $env */
+function requireSecureAdminPassword(array $env): string
+{
+    $password = (string) ($env['ADMIN_PASSWORD'] ?? '');
+    if (
+        strlen($password) < 16
+        || preg_match('/[a-z]/', $password) !== 1
+        || preg_match('/[A-Z]/', $password) !== 1
+        || preg_match('/[0-9]/', $password) !== 1
+        || preg_match('/[^A-Za-z0-9]/', $password) !== 1
+    ) {
+        throw new RuntimeException('ADMIN_PASSWORD must be at least 16 characters and contain upper, lower, number, and symbol characters.');
+    }
+
+    return $password;
+}
 
 function ensureProductCategoryColumn(PDO $pdo): void
 {
