@@ -210,7 +210,15 @@ final class Kernel
     {
         // Render captures stderr. Keep a safe diagnostic in its logs without
         // exposing SQL statements, request data, credentials, or stack traces.
-        error_log(sprintf('Application error: %s (code: %s)', $exception::class, (string) $exception->getCode()));
+        $driverCode = $exception instanceof \PDOException
+            ? (string) ($exception->errorInfo[1] ?? 'unknown')
+            : 'n/a';
+        error_log(sprintf(
+            'Application error: %s (code: %s, driver: %s)',
+            $exception::class,
+            (string) $exception->getCode(),
+            $driverCode,
+        ));
 
         $directory = dirname(__DIR__, 2) . '/var';
         if (!is_dir($directory)) {

@@ -88,6 +88,13 @@ function ensureUsernameColumn(PDO $pdo): void
         echo "Added username sign-in while preserving existing email data.\n";
     }
 
+    // Old installations retain email as historical data, but new username-only
+    // registrations must not be forced to supply it.
+    $email = $pdo->query("SHOW COLUMNS FROM users LIKE 'email'")->fetch(PDO::FETCH_ASSOC);
+    if ($email !== false && strtoupper((string) ($email['Null'] ?? '')) !== 'YES') {
+        $pdo->exec('ALTER TABLE users MODIFY email VARCHAR(190) NULL');
+    }
+
     $index = $pdo->query("SHOW INDEX FROM users WHERE Key_name = 'users_username_unique'")->fetch(PDO::FETCH_ASSOC);
     if ($index === false) {
         $pdo->exec('CREATE UNIQUE INDEX users_username_unique ON users (username)');
