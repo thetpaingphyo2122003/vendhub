@@ -6,7 +6,8 @@ $root = dirname(__DIR__);
 require $root . '/vendor/autoload.php';
 
 $env = [];
-foreach (file($root . '/.env', FILE_IGNORE_NEW_LINES) ?: [] as $line) {
+$envFile = $root . '/.env';
+foreach (is_file($envFile) ? (file($envFile, FILE_IGNORE_NEW_LINES) ?: []) : [] as $line) {
     $line = trim($line);
     if ($line === '' || str_starts_with($line, '#') || !str_contains($line, '=')) {
         continue;
@@ -80,14 +81,17 @@ if ($users === 0) {
 function ensureUsernameColumn(PDO $pdo): void
 {
     $username = $pdo->query("SHOW COLUMNS FROM users LIKE 'username'")->fetch(PDO::FETCH_ASSOC);
-    if ($username !== false) {
-        return;
+    if ($username === false) {
+        $pdo->exec('ALTER TABLE users ADD COLUMN username VARCHAR(32) NULL AFTER name');
+        $pdo->exec("UPDATE users SET username = CASE email WHEN 'admin@vending.test' THEN 'admin' WHEN 'user@vending.test' THEN 'user' ELSE CONCAT('user_', id) END");
+        $pdo->exec('ALTER TABLE users MODIFY username VARCHAR(32) NOT NULL');
+        echo "Added username sign-in while preserving existing email data.\n";
     }
 
-    $pdo->exec('ALTER TABLE users ADD COLUMN username VARCHAR(32) NULL AFTER name');
-    $pdo->exec("UPDATE users SET username = CASE email WHEN 'admin@vending.test' THEN 'admin' WHEN 'user@vending.test' THEN 'user' ELSE CONCAT('user_', id) END");
-    $pdo->exec('ALTER TABLE users MODIFY username VARCHAR(32) NOT NULL, ADD UNIQUE KEY users_username_unique (username)');
-    echo "Added username sign-in while preserving existing email data.\n";
+    $index = $pdo->query("SHOW INDEX FROM users WHERE Key_name = 'users_username_unique'")->fetch(PDO::FETCH_ASSOC);
+    if ($index === false) {
+        $pdo->exec('CREATE UNIQUE INDEX users_username_unique ON users (username)');
+    }
 }
 
 echo "Database `{$name}` is ready.\n";
