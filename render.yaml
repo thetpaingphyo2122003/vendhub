@@ -23,13 +23,17 @@ services:
       - key: DB_HOST
         sync: false
       - key: DB_PORT
-        value: "3306"
+        value: "4000"
       - key: DB_NAME
         sync: false
       - key: DB_USER
         sync: false
       - key: DB_PASS
         sync: false
+      - key: DB_SSL
+        value: "true"
+      - key: DB_SSL_CA
+        value: /etc/ssl/certs/ca-certificates.crt
       - key: CORS_ALLOWED_ORIGINS
         value: ""
       - key: TRUSTED_PROXIES

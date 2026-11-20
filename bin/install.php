@@ -15,7 +15,7 @@ foreach (file($root . '/.env', FILE_IGNORE_NEW_LINES) ?: [] as $line) {
     $env[trim($key)] = trim($value, " \t\"'");
 }
 
-foreach (['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASS'] as $key) {
+foreach (['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASS', 'DB_SSL', 'DB_SSL_CA'] as $key) {
     $value = getenv($key);
     if ($value !== false) {
         $env[$key] = $value;
@@ -27,13 +27,20 @@ $port = $env['DB_PORT'] ?? '3306';
 $name = $env['DB_NAME'] ?? 'vending_machine';
 $user = $env['DB_USER'] ?? 'root';
 $pass = $env['DB_PASS'] ?? '';
+$ssl = ($env['DB_SSL'] ?? 'false') === 'true';
+$sslCa = $env['DB_SSL_CA'] ?? '/etc/ssl/certs/ca-certificates.crt';
+$options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
+if ($ssl) {
+    $options[PDO::MYSQL_ATTR_SSL_CA] = $sslCa;
+    $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = true;
+}
 
 try {
     $server = new PDO(
         sprintf('mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4', $host, $port, $name),
         $user,
         $pass,
-        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION],
+        $options,
     );
 } catch (PDOException $exception) {
     try {
@@ -41,7 +48,7 @@ try {
             sprintf('mysql:host=%s;port=%s;charset=utf8mb4', $host, $port),
             $user,
             $pass,
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION],
+            $options,
         );
         $server->exec(sprintf(
             'CREATE DATABASE IF NOT EXISTS `%s` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci',

@@ -57,6 +57,8 @@ $config = new Config([
         'name' => $_ENV['DB_NAME'] ?? 'vending_machine',
         'user' => $_ENV['DB_USER'] ?? 'root',
         'pass' => $_ENV['DB_PASS'] ?? '',
+        'ssl' => ($_ENV['DB_SSL'] ?? 'false') === 'true',
+        'ssl_ca' => $_ENV['DB_SSL_CA'] ?? '/etc/ssl/certs/ca-certificates.crt',
     ],
     'jwt' => [
         'secret' => $jwtSecret !== '' ? $jwtSecret : 'local-dev-only-change-before-deploy-32chars',
@@ -107,11 +109,16 @@ $container->set(Connection::class, static function () use ($config): Connection 
         $db['port'],
         $db['name'],
     );
-    $pdo = new PDO($dsn, (string) $db['user'], (string) $db['pass'], [
+    $options = [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES => false,
-    ]);
+    ];
+    if (($db['ssl'] ?? false) === true) {
+        $options[PDO::MYSQL_ATTR_SSL_CA] = (string) $db['ssl_ca'];
+        $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = true;
+    }
+    $pdo = new PDO($dsn, (string) $db['user'], (string) $db['pass'], $options);
 
     return new Connection($pdo);
 });
@@ -157,7 +164,7 @@ function loadEnv(string $root): void
 
     foreach ([
         'APP_ENV', 'APP_URL', 'APP_DEBUG', 'FORCE_HTTPS',
-        'DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASS',
+        'DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASS', 'DB_SSL', 'DB_SSL_CA',
         'JWT_SECRET', 'JWT_TTL', 'CORS_ALLOWED_ORIGINS', 'TRUSTED_PROXIES',
     ] as $key) {
         $value = getenv($key);
