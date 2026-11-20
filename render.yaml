@@ -3,7 +3,7 @@ services:
     name: vendhub
     runtime: docker
     plan: free
-    healthCheckPath: /products
+    healthCheckPath: /health
     autoDeployTrigger: commit
     envVars:
       - key: APP_ENV
